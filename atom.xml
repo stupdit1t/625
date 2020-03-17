@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>砍柴网</title>
+  <title>xxx&#39;s blog</title>
   
-  <subtitle>砍柴</subtitle>
+  <subtitle>云淡风轻</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://yoursite.com/"/>
+  <link href="http://blog.idhyt.com/"/>
   <updated>2020-03-16T03:15:41.997Z</updated>
-  <id>http://yoursite.com/</id>
+  <id>http://blog.idhyt.com/</id>
   
   <author>
-    <name>625</name>
+    <name>xxx</name>
     
   </author>
   
@@ -18,8 +18,8 @@
   
   <entry>
     <title>Hello World</title>
-    <link href="http://yoursite.com/2020/03/16/hello-world/"/>
-    <id>http://yoursite.com/2020/03/16/hello-world/</id>
+    <link href="http://blog.idhyt.com/2020/03/16/hello-world/"/>
+    <id>http://blog.idhyt.com/2020/03/16/hello-world/</id>
     <published>2020-03-16T03:15:41.997Z</published>
     <updated>2020-03-16T03:15:41.997Z</updated>
     
