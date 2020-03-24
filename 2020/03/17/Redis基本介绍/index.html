@@ -1,0 +1,478 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  
+  
+    <meta name="keywords" content="redis基本介绍," />
+  
+
+  
+    <meta name="description" content="坚持每天砍一点好柴火" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/logo.png">
+  <title>Redis基本介绍 [ 砍柴网 ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="砍柴网" type="application/atom+xml">
+</head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="http://yoursite.com/images/logo.png">
+    <span class="title">砍柴网</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">首页</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">归档</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">标签</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/search" class="pure-menu-link">搜索</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="https://0xff000000.com" target="_blank" rel="noopener" class="pure-menu-link">关于</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/atom.xml" class="pure-menu-link">订阅</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        Redis基本介绍
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2020-03-17T15:36:44.819Z">
+        2020-03-17
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/" rel="tag">redis基本介绍</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+      <span class="read">阅读耗时 7 分钟</span>
+    </header>
+
+    <div class="post-content">
+      <ul>
+<li><strong>Redis是什么？</strong><blockquote>
+<p>Redis安装在磁盘；Redis数据存储在内存，redis是一种基于键值对（key-value）数据库，其中value可以为string、hash、list、set、zset等多种数据结构，可以满足很多应用场景。还提供了键过期，发布订阅，事务，流水线，等附加功能。Redis 的流水线功能允许客户端一次将多个命令请求发送给服务器， 并将被执行的多个命令请求的结果在一个命令回复中全部返回给客户端， 使用这个功能可以有效地减少客户端在执行多个命令时需要与服务器进行通信的次数。</p>
+</blockquote>
+</li>
+</ul>
+<a id="more"></a>
+
+<ul>
+<li><p><strong>Redis是什么？</strong></p>
+<blockquote>
+<p>Redis安装在磁盘；Redis数据存储在内存，redis是一种基于键值对（key-value）数据库，其中value可以为string、hash、list、set、zset等多种数据结构，可以满足很多应用场景。还提供了键过期，发布订阅，事务，流水线，等附加功能。Redis 的流水线功能允许客户端一次将多个命令请求发送给服务器， 并将被执行的多个命令请求的结果在一个命令回复中全部返回给客户端， 使用这个功能可以有效地减少客户端在执行多个命令时需要与服务器进行通信的次数。</p>
+</blockquote>
+</li>
+<li><p><strong>特性</strong></p>
+<blockquote>
+<ol>
+<li>速度快，数据放在内存中，官方给出的读写性能10万/S，与机器性能也有关<blockquote>
+<ul>
+<li>数据放内存中是速度快的主要原因</li>
+<li>C语言实现，与操作系统距离近</li>
+<li>使用了单线程架构，预防多线程可能产生的竞争问题</li>
+</ul>
+</blockquote>
+</li>
+<li>键值对的数据结构服务器</li>
+<li>丰富的功能：见上功能</li>
+<li>简单稳定：单线程</li>
+<li>持久化：发生断电或机器故障，数据可能会丢失，持久化到硬盘</li>
+<li>主从复制：实现多个相同数据的redis副本</li>
+<li>高可用和分布式：哨兵机制实现高可用，保证redis节点故障发现和自动转移</li>
+<li>客户端语言多：java php python c c++ nodejs等</li>
+</ol>
+</blockquote>
+</li>
+<li><p><strong>使用场景</strong></p>
+<blockquote>
+<ol>
+<li>缓存：合理使用缓存加快数据访问速度，降低后端数据源压力</li>
+<li>排行榜：按照热度排名，按照发布时间排行，主要用到列表和有序集合</li>
+<li>计数器应用：视频网站播放数，网站浏览数，使用redis计数</li>
+<li>社交网络：赞、踩、粉丝、下拉刷新</li>
+<li>消息队列：发布和订阅</li>
+</ol>
+</blockquote>
+</li>
+<li><p><strong>常用客户端命令</strong></p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>可执行文件</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>redis-server</td>
+<td>启动redis</td>
+</tr>
+<tr>
+<td>redis-cli</td>
+<td>redis命令行客户端</td>
+</tr>
+<tr>
+<td>redis-benchmark</td>
+<td>基准测试工具</td>
+</tr>
+<tr>
+<td>redis-check-aof</td>
+<td>AOF持久化文件检测和修复工具</td>
+</tr>
+<tr>
+<td>redis-check-dump</td>
+<td>RDB持久化文件检测和修复工具</td>
+</tr>
+<tr>
+<td>redis-sentinel</td>
+<td>启动哨兵</td>
+</tr>
+<tr>
+<td>&gt;1. <strong>redis-server启动：</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;&gt;1. 默认配置：redis-server, 日志输出版本信息，端口6379</td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;&gt;2. 运行启动：redis-server –port 6380  不建议</td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;&gt;3. 配置文件启动： redis-server /opt/redis/redis.conf，灵活，生产环境使用这种</td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;2. <strong>redis-cli 启动</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;&gt;1. 交互式：redis-cli -h {host} -p {prot}连接到redis服务，没有h默认连127.0</td>
+<td></td>
+</tr>
+<tr>
+<td>redis-cli -h 127.0.0.1 -p 6379                //没有p 默认连6379</td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;&gt;2. 命令式：redis-cli -h 127.0.0.1 -p 6379 get hello  //取key=hello的value</td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;3. <strong>停止redis服务： redis-cli shutdown</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;&gt;* a.关闭时：断开连接，持久化文件生成，相对安</td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;&gt;* b.还可以用kill关闭，此方式不会做持久化，还会造成缓冲区非法关闭，可能会造成AOF和丢失数据</td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;4. <strong>版本</strong>：</td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;&gt;* 版本号第二位为奇数，为非稳定版本（2.7、2.9、3.1）</td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;&gt;* 第二为偶数，为稳定版本（2.6、2.8、3.0）</td>
+<td></td>
+</tr>
+<tr>
+<td>&gt;&gt;* 当前奇数版本是下一个稳定版本的开发版本，如2.9是3.0的开发版本</td>
+<td></td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    <div>全文完。</div>
+  </article>
+  <div class="toc-container">
+    
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <img src="https://kevinofneu-blog-static.oss-cn-beijing.aliyuncs.com/static/2018-12-10-qrcode_for_gh_ffacf5722095_258.jpg" alt="Running Geek" style="margin: auto; display: block;"/>
+
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">老铁们关注走一走，不迷路</div>
+  
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2020/03/17/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" rel="next" title="POI-Excel的导出导入">
+          POI-Excel的导出导入
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2020/03/17/%E4%B8%80%E8%87%B4%E6%80%A7hash%E8%A7%A3%E9%87%8A/" rel="prev" title="一致性hash是什么意思？">
+            一致性hash是什么意思？
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'XXX';
+    
+    var disqus_url = 'http://yoursite.com/2020/03/17/Redis%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//XXX.disqus.com/count.js" async></script>
+
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://blog.0xff000000.com" target="_blank" rel="noopener">首页</a> |
+        <a class="bottom-item" href="https://0xff000000.com" target="_blank">主站</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?FuckUBaidu";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'XXX', 'auto');
+      ga('send', 'pageview');
+  </script>
+
+
+</body>
+</html>
