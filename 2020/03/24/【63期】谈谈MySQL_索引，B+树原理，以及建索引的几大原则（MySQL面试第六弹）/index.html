@@ -33,7 +33,7 @@
 
 
 
-  <meta name="keywords" content="redis基本介绍," />
+  <meta name="keywords" content="Java基础," />
 
 
 
@@ -44,17 +44,22 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="Redis是什么？ Redis安装在磁盘；Redis数据存储在内存，redis是一种基于键值对（key-value）数据库，其中value可以为string、hash、list、set、zset等多种数据结构，可以满足很多应用场景。还提供了键过期，发布订阅，事务，流水线，等附加功能。Redis 的流水线功能允许客户端一次将多个命令请求发送给服务器， 并将被执行的多个命令请求的结果在一个命令回复中">
+<meta name="description" content="MYSQL一直了解得都不多，之前写sql准备提交生产环境之前的时候，老员工帮我检查了下sql，让修改了一下存储引擎，当时我使用的是Myisam，后面改成InnoDB了。为什么要改成这样，之前都没有听过存储引擎，于是网上查了一下。 事实上使用不同的存储引擎也是有很大区别的，下面猿友们可以了解一下。 一、存储引擎的比较  注：上面提到的B树索引并没有指出是B-Tree和B+Tree索引，但是B-树和B">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis基本介绍">
-<meta property="og:url" content="https://kanchai.club/2020/03/17/Redis%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:title" content="【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）">
+<meta property="og:url" content="https://kanchai.club/2020/03/24/%E3%80%9063%E6%9C%9F%E3%80%91%E8%B0%88%E8%B0%88MySQL_%E7%B4%A2%E5%BC%95%EF%BC%8CB+%E6%A0%91%E5%8E%9F%E7%90%86%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%BB%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E5%87%A0%E5%A4%A7%E5%8E%9F%E5%88%99%EF%BC%88MySQL%E9%9D%A2%E8%AF%95%E7%AC%AC%E5%85%AD%E5%BC%B9%EF%BC%89/index.html">
 <meta property="og:site_name" content="625&#39;s blog">
-<meta property="og:description" content="Redis是什么？ Redis安装在磁盘；Redis数据存储在内存，redis是一种基于键值对（key-value）数据库，其中value可以为string、hash、list、set、zset等多种数据结构，可以满足很多应用场景。还提供了键过期，发布订阅，事务，流水线，等附加功能。Redis 的流水线功能允许客户端一次将多个命令请求发送给服务器， 并将被执行的多个命令请求的结果在一个命令回复中">
-<meta property="article:published_time" content="2020-03-17T15:36:44.819Z">
-<meta property="article:modified_time" content="2020-03-17T15:35:35.000Z">
+<meta property="og:description" content="MYSQL一直了解得都不多，之前写sql准备提交生产环境之前的时候，老员工帮我检查了下sql，让修改了一下存储引擎，当时我使用的是Myisam，后面改成InnoDB了。为什么要改成这样，之前都没有听过存储引擎，于是网上查了一下。 事实上使用不同的存储引擎也是有很大区别的，下面猿友们可以了解一下。 一、存储引擎的比较  注：上面提到的B树索引并没有指出是B-Tree和B+Tree索引，但是B-树和B">
+<meta property="og:image" content="https://www.javazhiyin.com/wp-content/uploads/2020/03/java1-1584537211.png">
+<meta property="og:image" content="https://www.javazhiyin.com/wp-content/uploads/2020/03/java8-1584537211.jpeg">
+<meta property="og:image" content="https://www.javazhiyin.com/wp-content/uploads/2020/03/java7-1584537211.jpeg">
+<meta property="og:image" content="https://www.javazhiyin.com/wp-content/uploads/2020/03/java6-1584537211.jpeg">
+<meta property="article:published_time" content="2020-03-24T10:00:50.771Z">
+<meta property="article:modified_time" content="2020-03-24T09:56:03.000Z">
 <meta property="article:author" content="625">
-<meta property="article:tag" content="redis基本介绍">
+<meta property="article:tag" content="Java基础">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.javazhiyin.com/wp-content/uploads/2020/03/java1-1584537211.png">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -64,7 +69,7 @@
   };
 </script>
 
-  <title> Redis基本介绍 | 625's blog </title>
+  <title> 【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹） | 625's blog </title>
 <meta name="generator" content="Hexo 4.2.0"></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -354,7 +359,7 @@
           
           
             
-              Redis基本介绍
+              【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）
             
           
         </h1>
@@ -363,8 +368,8 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2020-03-17T23:36:44+08:00" content="2020-03-17">
-            2020-03-17
+          <time itemprop="dateCreated" datetime="2020-03-24T18:00:50+08:00" content="2020-03-24">
+            2020-03-24
           </time>
         </span>
 
@@ -373,8 +378,8 @@
             &nbsp; | &nbsp; 分类于
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Redis/" itemprop="url" rel="index">
-                  <span itemprop="name">Redis</span>
+                <a href="/categories/Java/" itemprop="url" rel="index">
+                  <span itemprop="name">Java</span>
                 </a>
               </span>
 
@@ -389,8 +394,8 @@
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2020/03/17/Redis%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/17/Redis基本介绍/" itemprop="commentsCount"></span>
+            <a href="/2020/03/24/%E3%80%9063%E6%9C%9F%E3%80%91%E8%B0%88%E8%B0%88MySQL_%E7%B4%A2%E5%BC%95%EF%BC%8CB+%E6%A0%91%E5%8E%9F%E7%90%86%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%BB%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E5%87%A0%E5%A4%A7%E5%8E%9F%E5%88%99%EF%BC%88MySQL%E9%9D%A2%E8%AF%95%E7%AC%AC%E5%85%AD%E5%BC%B9%EF%BC%89/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/24/【63期】谈谈MySQL_索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）/" itemprop="commentsCount"></span>
             </a>
           </span>
           
@@ -404,147 +409,102 @@
       
 
       
-        <span itemprop="articleBody"><ul>
-<li><strong>Redis是什么？</strong><blockquote>
-<p>Redis安装在磁盘；Redis数据存储在内存，redis是一种基于键值对（key-value）数据库，其中value可以为string、hash、list、set、zset等多种数据结构，可以满足很多应用场景。还提供了键过期，发布订阅，事务，流水线，等附加功能。Redis 的流水线功能允许客户端一次将多个命令请求发送给服务器， 并将被执行的多个命令请求的结果在一个命令回复中全部返回给客户端， 使用这个功能可以有效地减少客户端在执行多个命令时需要与服务器进行通信的次数。</p>
-</blockquote>
-</li>
-</ul>
-<a id="more"></a>
-
-<ul>
-<li><p><strong>Redis是什么？</strong></p>
+        <span itemprop="articleBody"><p>MYSQL一直了解得都不多，之前写sql准备提交生产环境之前的时候，老员工帮我检查了下sql，让修改了一下存储引擎，当时我使用的是Myisam，后面改成InnoDB了。为什么要改成这样，之前都没有听过存储引擎，于是网上查了一下。</p>
+<p>事实上使用不同的存储引擎也是有很大区别的，下面猿友们可以了解一下。</p>
+<h2 id="一、存储引擎的比较"><a href="#一、存储引擎的比较" class="headerlink" title="一、存储引擎的比较"></a>一、存储引擎的比较</h2><p><img src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java1-1584537211.png" alt="【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）" title="【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）"></p>
 <blockquote>
-<p>Redis安装在磁盘；Redis数据存储在内存，redis是一种基于键值对（key-value）数据库，其中value可以为string、hash、list、set、zset等多种数据结构，可以满足很多应用场景。还提供了键过期，发布订阅，事务，流水线，等附加功能。Redis 的流水线功能允许客户端一次将多个命令请求发送给服务器， 并将被执行的多个命令请求的结果在一个命令回复中全部返回给客户端， 使用这个功能可以有效地减少客户端在执行多个命令时需要与服务器进行通信的次数。</p>
+<p>注：上面提到的B树索引并没有指出是B-Tree和B+Tree索引，但是B-树和B+树的定义是有区别的。</p>
 </blockquote>
-</li>
-<li><p><strong>特性</strong></p>
-<blockquote>
+<p>在 MySQL 中，主要有四种类型的索引，分别为：B-Tree 索引， Hash 索引， Fulltext 索引和 R-Tree 索引。</p>
+<p>B-Tree 索引是 MySQL 数据库中使用最为频繁的索引类型，除了 Archive 存储引擎之外的其他所有的存储引擎都支持 B-Tree 索引。Archive 引擎直到 MySQL 5.1 才支持索引，而且只支持索引单个 AUTO_INCREMENT 列。</p>
+<p>不仅仅在 MySQL 中是如此，实际上在其他的很多数据库管理系统中B-Tree 索引也同样是作为最主要的索引类型，这主要是因为 B-Tree 索引的存储结构在数据库的数据检索中有非常优异的表现。</p>
+<p>一般来说， MySQL 中的 B-Tree 索引的物理文件大多都是以 Balance Tree 的结构来存储的，也就是所有实际需要的数据都存放于 Tree 的 Leaf Node(叶子节点) ，而且到任何一个 Leaf Node 的最短路径的长度都是完全相同的，所以我们大家都称之为 B-Tree 索引。</p>
+<p>当然，可能各种数据库（或 MySQL 的各种存储引擎）在存放自己的 B-Tree 索引的时候会对存储结构稍作改造。如 Innodb 存储引擎的 B-Tree 索引实际使用的存储结构实际上是 B+Tree，也就是在 B-Tree 数据结构的基础上做了很小的改造，在每一个Leaf Node 上面出了存放索引键的相关信息之外，还存储了指向与该 Leaf Node 相邻的后一个 LeafNode 的指针信息（增加了顺序访问指针），这主要是为了加快检索多个相邻 Leaf Node 的效率考虑。</p>
+<p>InnoDB是Mysql的默认存储引擎(Mysql5.5.5之前是MyISAM）</p>
+<p>可能对于没有了解过索引的猿友这样看这篇文章十分吃力，这类猿友有必要先对Mysql索引有个大体的了解。</p>
+<p>接下来我们先看看B-树、B+树的概念。弄清楚，为什么加了索引查询速度会加快？</p>
+<h2 id="二、B-树、B-树概念"><a href="#二、B-树、B-树概念" class="headerlink" title="二、B-树、B+树概念"></a>二、B-树、B+树概念</h2><h3 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h3><p>即二叉搜索树：</p>
 <ol>
-<li>速度快，数据放在内存中，官方给出的读写性能10万/S，与机器性能也有关<blockquote>
-<ul>
-<li>数据放内存中是速度快的主要原因</li>
-<li>C语言实现，与操作系统距离近</li>
-<li>使用了单线程架构，预防多线程可能产生的竞争问题</li>
-</ul>
-</blockquote>
+<li><p>所有非叶子结点至多拥有两个儿子（Left和Right）；</p>
 </li>
-<li>键值对的数据结构服务器</li>
-<li>丰富的功能：见上功能</li>
-<li>简单稳定：单线程</li>
-<li>持久化：发生断电或机器故障，数据可能会丢失，持久化到硬盘</li>
-<li>主从复制：实现多个相同数据的redis副本</li>
-<li>高可用和分布式：哨兵机制实现高可用，保证redis节点故障发现和自动转移</li>
-<li>客户端语言多：java php python c c++ nodejs等</li>
+<li><p>所有结点存储一个关键字；</p>
+</li>
+<li><p>非叶子结点的左指针指向小于其关键字的子树，右指针指向大于其关键字的子树；</p>
+</li>
 </ol>
-</blockquote>
-</li>
-<li><p><strong>使用场景</strong></p>
-<blockquote>
+<p>如：</p>
+<p><img src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java8-1584537211.jpeg" alt="【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）" title="【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）"></p>
+<h3 id="B-树"><a href="#B-树" class="headerlink" title="B-树"></a>B-树</h3><p>是一种多路搜索树（并不是二叉的）：</p>
 <ol>
-<li>缓存：合理使用缓存加快数据访问速度，降低后端数据源压力</li>
-<li>排行榜：按照热度排名，按照发布时间排行，主要用到列表和有序集合</li>
-<li>计数器应用：视频网站播放数，网站浏览数，使用redis计数</li>
-<li>社交网络：赞、踩、粉丝、下拉刷新</li>
-<li>消息队列：发布和订阅</li>
+<li><p>定义任意非叶子结点最多只有M个儿子；且M&gt;2；</p>
+</li>
+<li><p>根结点的儿子数为[2, M]；</p>
+</li>
+<li><p>除根结点以外的非叶子结点的儿子数为[M/2, M]；</p>
+</li>
+<li><p>每个结点存放至少M/2-1（取上整）和至多M-1个关键字；（至少2个关键字）</p>
+</li>
+<li><p>非叶子结点的关键字个数=指向儿子的指针个数-1；</p>
+</li>
+<li><p>非叶子结点的关键字：K[1], K[2], …, K[M-1]；且K[i] &lt; K[i+1]；</p>
+</li>
+<li><p>非叶子结点的指针：P[1], P[2], …, P[M]；其中P[1]指向关键字小于K[1]的子树，P[M]指向关键字大于K[M-1]的子树，其它P[i]指向关键字属于(K[i-1], K[i])的子树；</p>
+</li>
+<li><p>所有叶子结点位于同一层；</p>
+</li>
 </ol>
-</blockquote>
+<p>如：（M=3）</p>
+<p><img src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java7-1584537211.jpeg" alt="【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）" title="【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）"></p>
+<p>B-树的搜索，从根结点开始，对结点内的关键字（有序）序列进行二分查找，如果命中则结束，否则进入查询关键字所属范围的儿子结点；重复，直到所对应的儿子指针为空，或已经是叶子结点；</p>
+<p><strong>B-树的特性：</strong></p>
+<ol>
+<li><p>关键字集合分布在整颗树中；</p>
 </li>
-<li><p><strong>常用客户端命令</strong></p>
+<li><p>任何一个关键字出现且只出现在一个结点中；</p>
 </li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>可执行文件</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>redis-server</td>
-<td>启动redis</td>
-</tr>
-<tr>
-<td>redis-cli</td>
-<td>redis命令行客户端</td>
-</tr>
-<tr>
-<td>redis-benchmark</td>
-<td>基准测试工具</td>
-</tr>
-<tr>
-<td>redis-check-aof</td>
-<td>AOF持久化文件检测和修复工具</td>
-</tr>
-<tr>
-<td>redis-check-dump</td>
-<td>RDB持久化文件检测和修复工具</td>
-</tr>
-<tr>
-<td>redis-sentinel</td>
-<td>启动哨兵</td>
-</tr>
-<tr>
-<td>&gt;1. <strong>redis-server启动：</strong></td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;&gt;1. 默认配置：redis-server, 日志输出版本信息，端口6379</td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;&gt;2. 运行启动：redis-server –port 6380  不建议</td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;&gt;3. 配置文件启动： redis-server /opt/redis/redis.conf，灵活，生产环境使用这种</td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;2. <strong>redis-cli 启动</strong></td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;&gt;1. 交互式：redis-cli -h {host} -p {prot}连接到redis服务，没有h默认连127.0</td>
-<td></td>
-</tr>
-<tr>
-<td>redis-cli -h 127.0.0.1 -p 6379                //没有p 默认连6379</td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;&gt;2. 命令式：redis-cli -h 127.0.0.1 -p 6379 get hello  //取key=hello的value</td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;3. <strong>停止redis服务： redis-cli shutdown</strong></td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;&gt;* a.关闭时：断开连接，持久化文件生成，相对安</td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;&gt;* b.还可以用kill关闭，此方式不会做持久化，还会造成缓冲区非法关闭，可能会造成AOF和丢失数据</td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;4. <strong>版本</strong>：</td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;&gt;* 版本号第二位为奇数，为非稳定版本（2.7、2.9、3.1）</td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;&gt;* 第二为偶数，为稳定版本（2.6、2.8、3.0）</td>
-<td></td>
-</tr>
-<tr>
-<td>&gt;&gt;* 当前奇数版本是下一个稳定版本的开发版本，如2.9是3.0的开发版本</td>
-<td></td>
-</tr>
-</tbody></table>
+<li><p>搜索有可能在非叶子结点结束；</p>
+</li>
+<li><p>其搜索性能等价于在关键字全集内做一次二分查找；</p>
+</li>
+<li><p>自动层次控制；</p>
+</li>
+</ol>
+<p>由于限制了除根结点以外的非叶子结点，至少含有M/2个儿子，确保了结点的至少利用率。</p>
+<p>所以B-树的性能总是等价于二分查找（与M值无关），也就没有B树平衡的问题；</p>
+<p>由于M/2的限制，在插入结点时，如果结点已满，需要将结点分裂为两个各占M/2的结点；删除结点时，需将两个不足M/2的兄弟结点合并；</p>
+<h3 id="B-树-1"><a href="#B-树-1" class="headerlink" title="B+树"></a>B+树</h3><p>B+树是B-树的变体，也是一种多路搜索树：</p>
+<ol>
+<li><p>其定义基本与B-树同，除了：</p>
+</li>
+<li><p>非叶子结点的子树指针与关键字个数相同；</p>
+</li>
+<li><p>非叶子结点的子树指针P[i]，指向关键字值属于[K[i], K[i+1])的子树（B-树是开区间）；</p>
+</li>
+<li><p>为所有叶子结点增加一个链指针；</p>
+</li>
+<li><p>所有关键字都在叶子结点出现；</p>
+</li>
+</ol>
+<p>如：（M=3）</p>
+<p><img src="https://www.javazhiyin.com/wp-content/uploads/2020/03/java6-1584537211.jpeg" alt="【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）" title="【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）"></p>
+<p>B+的搜索与B-树也基本相同，区别是B+树只有达到叶子结点才命中（B-树可以在非叶子结点命中），其性能也等价于在关键字全集做一次二分查找；</p>
+<p><strong>B+的特性：</strong></p>
+<ol>
+<li><p>所有关键字都出现在叶子结点的链表中（稠密索引），且链表中的关键字恰好是有序的；</p>
+</li>
+<li><p>不可能在非叶子结点命中；</p>
+</li>
+<li><p>非叶子结点相当于是叶子结点的索引（稀疏索引），叶子结点相当于是存储（关键字）数据的数据层；</p>
+</li>
+<li><p>更适合文件索引系统；</p>
+</li>
+</ol>
+<h2 id="三、建索引的几大原则"><a href="#三、建索引的几大原则" class="headerlink" title="三、建索引的几大原则"></a>三、建索引的几大原则</h2><p>1.最左前缀匹配原则，非常重要的原则，mysql会一直向右匹配直到遇到范围查询(&gt;、&lt;、between、like)就停止匹配，比如a = 1 and b = 2 and c &gt; 3 and d = 4 如果建立(a,b,c,d)顺序的索引，d是用不到索引的，如果建立(a,b,d,c)的索引则都可以用到，a,b,d的顺序可以任意调整。</p>
+<p>2.=和in可以乱序，比如a = 1 and b = 2 and c = 3 建立(a,b,c)索引可以任意顺序，mysql的查询优化器会帮你优化成索引可以识别的形式</p>
+<p>3.尽量选择区分度高的列作为索引,区分度的公式是count(distinct col)/count(*)，表示字段不重复的比例，比例越大我们扫描的记录数越少，唯一键的区分度是1，而一些状态、性别字段可能在大数据面前区分度就是0，那可能有人会问，这个比例有什么经验值吗？使用场景不同，这个值也很难确定，一般需要join的字段我们都要求是0.1以上，即平均1条扫描10条记录</p>
+<p>4.索引列不能参与计算，保持列“干净”，比如from_unixtime(create_time) = ’2014-05-29’就不能使用到索引，原因很简单，b+树中存的都是数据表中的字段值，但进行检索时，需要把所有元素都应用函数才能比较，显然成本太大。所以语句应该写成create_time = unix_timestamp(’2014-05-29’);</p>
+<p>5.尽量的扩展索引，不要新建索引。比如表中已经有a的索引，现在要加(a,b)的索引，那么只需要修改原来的索引即可</p>
+<p><em>来源：blog.csdn.net/u013142781/article/details/51706790</em></p>
 </span>
       
     </div>
@@ -553,7 +513,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/redis%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/" rel="tag">#redis基本介绍</a>
+            <a href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">#Java基础</a>
           
         </div>
       
@@ -562,13 +522,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/03/17/%E4%B8%80%E8%87%B4%E6%80%A7hash%E8%A7%A3%E9%87%8A/" rel="prev">一致性hash是什么意思？</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/03/17/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" rel="next">POI-Excel的导出导入</a>
+              <a href="/2020/03/17/excel/" rel="next">POI-Excel的导出导入</a>
             
           </div>
         </div>
@@ -855,7 +813,7 @@
           <div class="post-toc">
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、存储引擎的比较"><span class="nav-number">1.</span> <span class="nav-text">一、存储引擎的比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、B-树、B-树概念"><span class="nav-number">2.</span> <span class="nav-text">二、B-树、B+树概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B树"><span class="nav-number">2.1.</span> <span class="nav-text">B树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-树"><span class="nav-number">2.2.</span> <span class="nav-text">B-树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-树-1"><span class="nav-number">2.3.</span> <span class="nav-text">B+树</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、建索引的几大原则"><span class="nav-number">3.</span> <span class="nav-text">三、建索引的几大原则</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
@@ -908,9 +866,9 @@
 
   <script type="text/javascript">
     var disqus_shortname = 'xxx';
-    var disqus_identifier = '2020/03/17/Redis基本介绍/';
-    var disqus_title = 'Redis基本介绍';
-    var disqus_url = 'https://kanchai.club/2020/03/17/Redis%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/';
+    var disqus_identifier = '2020/03/24/【63期】谈谈MySQL_索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）/';
+    var disqus_title = '【63期】谈谈MySQL 索引，B+树原理，以及建索引的几大原则（MySQL面试第六弹）';
+    var disqus_url = 'https://kanchai.club/2020/03/24/%E3%80%9063%E6%9C%9F%E3%80%91%E8%B0%88%E8%B0%88MySQL_%E7%B4%A2%E5%BC%95%EF%BC%8CB+%E6%A0%91%E5%8E%9F%E7%90%86%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%BB%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E5%87%A0%E5%A4%A7%E5%8E%9F%E5%88%99%EF%BC%88MySQL%E9%9D%A2%E8%AF%95%E7%AC%AC%E5%85%AD%E5%BC%B9%EF%BC%89/';
 
     function run_disqus_script(disqus_script){
       var dsq = document.createElement('script');
