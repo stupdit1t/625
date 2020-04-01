@@ -167,12 +167,12 @@ footer .bottom-item:hover {
 }
 @media screen and (min-width: 576px) {
   .post-page {
-    padding: 10px 50px;
+    padding: 10px 15px;
   }
 }
 @media (max-width: 576px) {
   .post-page {
-    padding: 10px 50px;
+    padding: 10px 15px;
   }
 }
 html,
@@ -289,7 +289,7 @@ body {
 }
 @media (max-width: 576px) {
   .recent-posts {
-    padding: 10px 50px;
+    padding: 10px 15px;
   }
 }
 .recent-posts .recent-post-item {
@@ -385,12 +385,12 @@ body {
 }
 @media screen and (min-width: 576px) {
   .post {
-    padding: 10px 50px;
+    padding: 10px 15px;
   }
 }
 @media (max-width: 576px) {
   .post {
-    padding: 10px 50px;
+    padding: 10px 15px;
   }
 }
 .post .post-header {
@@ -590,12 +590,12 @@ body {
 }
 @media screen and (min-width: 576px) {
   .tag-page {
-    padding: 10px 50px;
+    padding: 10px 15px;
   }
 }
 @media (max-width: 576px) {
   .tag-page {
-    padding: 10px 50px;
+    padding: 10px 15px;
   }
 }
 .tag-page .tag-item {

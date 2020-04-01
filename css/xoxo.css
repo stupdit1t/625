@@ -479,7 +479,7 @@ body {
 }
 @media screen and (min-width: 576px) {
   .post {
-    padding: 10px 50px;
+    padding: 10px 15px;
   }
 }
 @media (max-width: 576px) {
@@ -684,12 +684,12 @@ body {
 }
 @media screen and (min-width: 576px) {
   .tag-page {
-    padding: 10px 50px;
+    padding: 10px 15px;
   }
 }
 @media (max-width: 576px) {
   .tag-page {
-    padding: 10px 50px;
+    padding: 10px 15px;
   }
 }
 .tag-page .tag-item {
