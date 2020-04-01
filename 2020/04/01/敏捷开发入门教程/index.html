@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  
+  
+    <meta name="keywords" content="视频处理," />
+  
+
+  
+    <meta name="description" content="纪录一些看到的好文，收藏起来" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/logo.png">
+  <title>GitHub 第三方登录示例教程！ [ 每天拾柴火 ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="每天拾柴火" type="application/atom+xml">
+</head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://kanchai.club/images/logo.png">
+    <span class="title">每天拾柴火</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">首页</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">归档</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">标签</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/search" class="pure-menu-link">搜索</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">关于</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/atom.xml" class="pure-menu-link">订阅</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        GitHub 第三方登录示例教程！
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2020-04-01T03:42:17.749Z">
+        2020-04-01
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86/" rel="tag">视频处理</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+      <span class="read">阅读耗时 12 分钟</span>
+    </header>
+
+    <div class="post-content">
+      <p>作者： <a href="http://www.ruanyifeng.com/" target="_blank" rel="noopener">阮一峰</a></p>
+<p>日期： <a href="http://www.ruanyifeng.com/blog/2019/03/" target="_blank" rel="noopener">2019年3月 6日</a></p>
+<p>敏捷开发（agile development）是非常流行的软件开发方法。据<a href="https://www.statista.com/statistics/673786/worldwide-software-development-survey-agile-development-continuous-integration-adoption/" target="_blank" rel="noopener">统计</a>，2018年90%的软件开发采用敏捷开发。</p>
+<p>但是，到底什么是敏捷开发，能说清的人却不多。本文尝试用简洁易懂的语言，解释敏捷开发。</p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201903/bg2019030701.jpg" alt=""></p>
+<h2 id="一、迭代开发"><a href="#一、迭代开发" class="headerlink" title="一、迭代开发"></a>一、迭代开发</h2><p>敏捷开发的核心是迭代开发（iterative development）。敏捷一定是采用迭代开发的方式。</p>
+<p>那么什么是”迭代开发”呢？迭代的英文是 iterative，直译为”重复”，迭代开发其实就是”重复开发”。</p>
+<p>对于大型软件项目，传统的开发方式是采用一个大周期（比如一年）进行开发，整个过程就是一次”大开发”；迭代开发的方式则不一样，它将开发过程拆分成多个小周期，即一次”大开发”变成多次”小开发”，每次小开发都是同样的流程，所以看上去就好像重复在做同样的步骤。</p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201903/bg2019030702.jpg" alt=""></p>
+<p>举例来说，SpaceX 公司想造一个大推力火箭，将人类送到火星。但是，它不是一开始就造大火箭，而是先造一个最简陋的小火箭 Falcon 1。结果，第一次发射就爆炸了，直到第四次发射，才成功进入轨道。然后，开发了中型火箭 Falcon 9，九年中发射了70次。最后，才开发 Falcon 重型火箭。如果 SpaceX 不采用迭代开发，它可能直到现在还无法上天。</p>
+<p>迭代开发将一个大任务，分解成多次连续的开发，本质就是逐步改进。开发者先快速发布一个有效但不完美的最简版本，然后不断迭代。每一次迭代都包含规划、设计、编码、测试、评估五个步骤，不断改进产品，添加新功能。通过频繁的发布，以及跟踪对前一次迭代的反馈，最终接近较完善的产品形态。</p>
+<h2 id="二、增量开发"><a href="#二、增量开发" class="headerlink" title="二、增量开发"></a>二、增量开发</h2><p>迭代开发只是要求将开发分成多个迭代，并没有回答一个重要的问题：怎么划分迭代，哪个任务在这个迭代，哪个任务在下个迭代？这时，一般采用”增量开发”（incremental development）划分迭代。</p>
+<p>所谓”增量开发”，指的是软件的每个版本，都会新增一个用户可以感知的完整功能。也就是说，按照新增功能来划分迭代。</p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201903/bg2019030703.jpg" alt=""></p>
+<p>举例来说，房产公司开发一个10栋楼的小区。如果采用增量开发的模式，该公司第一个迭代就是交付一号楼，第二个迭代交付二号楼……每个迭代都是完成一栋完整的楼。而不是第一个迭代挖好10栋楼的地基，第二个迭代建好每栋楼的骨架，第三个迭代架设屋顶……</p>
+<p>增量开发加上迭代开发，才算真正的敏捷开发。</p>
+<h2 id="三、敏捷开发的好处"><a href="#三、敏捷开发的好处" class="headerlink" title="三、敏捷开发的好处"></a>三、敏捷开发的好处</h2><h3 id="3-1-早期交付"><a href="#3-1-早期交付" class="headerlink" title="3.1 早期交付"></a>3.1 早期交付</h3><p>敏捷开发的第一个好处，就是早期交付，从而大大降低成本。</p>
+<p>还是以上一节的房产公司为例，如果按照传统的”瀑布开发模式”，先挖10栋楼的地基、再盖骨架、然后架设屋顶，每个阶段都等到前一个阶段完成后开始，可能需要两年才能一次性交付10栋楼。也就是说，如果不考虑预售，该项目必须等到两年后才能回款。</p>
+<p>敏捷开发是六个月后交付一号楼，后面每两个月交付一栋楼。因此，半年就能回款10%，后面每个月都会有现金流，资金压力就大大减轻了。</p>
+<h3 id="3-2-降低风险"><a href="#3-2-降低风险" class="headerlink" title="3.2 降低风险"></a>3.2 降低风险</h3><p>敏捷开发的第二个好处是，及时了解市场需求，降低产品不适用的风险。</p>
+<p>请想一想，哪一种情况损失比较小：10栋楼都造好以后，才发现卖不出去，还是造好第一栋楼，就发现卖不出去，从而改进或停建后面9栋楼？</p>
+<p>对于软件项目来说，先有一个原型产品，了解市场的接受程度，往往是项目成功的关键。有一本书叫做《梦断代码》，副标题就是”20+个程序员，三年时间，4732个bug，100+万美元，最后失败的故事”，这就是没有采用敏捷开发的结果。相反的，Instagram 最初是一个地理位置打卡 App，后来发现用户不怎么在乎地理位置，更喜欢上传照片，就改做照片上传软件，结果成了独角兽。</p>
+<p>由于敏捷开发可以不断试错，找出对业务最重要的功能，然后通过迭代，调整软件方向。相比传统方式，大大增加了产品成功的可能性。如果市场需求不确定，或者你对该领域不熟悉，那么敏捷开发几乎是唯一可行的应对方式。</p>
+<h2 id="四、如何进行每一次迭代"><a href="#四、如何进行每一次迭代" class="headerlink" title="四、如何进行每一次迭代"></a>四、如何进行每一次迭代</h2><p>虽然敏捷开发将软件开发分成多个迭代，但是也要求，每次迭代都是一个完整的软件开发周期，必须按照软件工程的方法论，进行正规的流程管理。</p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201903/bg2019030704.jpg" alt=""></p>
+<p>具体来说，每次迭代都必须依次完成以下五个步骤。</p>
+<blockquote>
+<ol>
+<li><p>需求分析（requirements analysis）</p>
+</li>
+<li><p>设计（design）</p>
+</li>
+<li><p>编码（coding）</p>
+</li>
+<li><p>测试（testing）</p>
+</li>
+<li><p>部署和评估（deployment / evaluation）</p>
+</li>
+</ol>
+</blockquote>
+<p>每个迭代大约持续2~6周。</p>
+<h2 id="五、敏捷开发的价值观"><a href="#五、敏捷开发的价值观" class="headerlink" title="五、敏捷开发的价值观"></a>五、敏捷开发的价值观</h2><p>《敏捷软件开发宣言》里面提到四个价值观。</p>
+<blockquote>
+<ul>
+<li><p>程序员的主观能动性，以及程序员之间的互动，优于既定流程和工具。</p>
+</li>
+<li><p>软件能够运行，优于详尽的文档。</p>
+</li>
+<li><p>跟客户的密切协作，优于合同和谈判。</p>
+</li>
+<li><p>能够响应变化，优于遵循计划。</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="六、十二条原则"><a href="#六、十二条原则" class="headerlink" title="六、十二条原则"></a>六、十二条原则</h2><p>该宣言还提出十二条敏捷开发的原则。</p>
+<ol>
+<li><p>通过早期和持续交付有价值的软件，实现客户满意度。</p>
+</li>
+<li><p>欢迎不断变化的需求，即使是在项目开发的后期。要善于利用需求变更，帮助客户获得竞争优势。</p>
+</li>
+<li><p>不断交付可用的软件，周期通常是几周，越短越好。</p>
+</li>
+<li><p>项目过程中，业务人员与开发人员必须在一起工作。</p>
+</li>
+<li><p>项目必须围绕那些有内在动力的个人而建立，他们应该受到信任。</p>
+</li>
+<li><p>面对面交谈是最好的沟通方式。</p>
+</li>
+<li><p>可用性是衡量进度的主要指标。</p>
+</li>
+<li><p>提倡可持续的开发，保持稳定的进展速度。</p>
+</li>
+<li><p>不断关注技术是否优秀，设计是否良好。</p>
+</li>
+<li><p>简单性至关重要，尽最大可能减少不必要的工作。</p>
+</li>
+<li><p>最好的架构、要求和设计，来自团队内部自发的认识。</p>
+</li>
+<li><p>团队要定期反思如何更有效，并相应地进行调整。</p>
+</li>
+</ol>
+<h2 id="七、参考链接"><a href="#七、参考链接" class="headerlink" title="七、参考链接"></a>七、参考链接</h2><ul>
+<li><p><a href="https://www.mindk.com/blog/iterative-development/" target="_blank" rel="noopener">Iterative development: the secret to great product launches</a>, Pavlo Zinchenko</p>
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/Agile_software_development" target="_blank" rel="noopener">Agile software development</a>, Wikipedia</p>
+</li>
+</ul>
+
+    </div>
+
+    <div>全文完。</div>
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、迭代开发"><span class="toc-text">一、迭代开发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、增量开发"><span class="toc-text">二、增量开发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、敏捷开发的好处"><span class="toc-text">三、敏捷开发的好处</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-早期交付"><span class="toc-text">3.1 早期交付</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-降低风险"><span class="toc-text">3.2 降低风险</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、如何进行每一次迭代"><span class="toc-text">四、如何进行每一次迭代</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、敏捷开发的价值观"><span class="toc-text">五、敏捷开发的价值观</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、十二条原则"><span class="toc-text">六、十二条原则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、参考链接"><span class="toc-text">七、参考链接</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>注:文章部分来源为转载，会注明出处，每天坚持从外边砍柴！</span>
+</div>
+
+<div class="share" style="width: 100%;">
+  
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2020/04/01/FFmpeg_%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/" rel="next" title="GitHub 第三方登录示例教程！">
+          GitHub 第三方登录示例教程！
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+      </div>
+    </div>
+  
+
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'XXX';
+    
+    var disqus_url = 'https://kanchai.club/2020/04/01/%E6%95%8F%E6%8D%B7%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//XXX.disqus.com/count.js" async></script>
+
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://kanchai.club">首页</a> |
+        <a class="bottom-item" href="https://www.zhihu.com/people/lt625" target="_blank">知乎</a> |
+        <a class="bottom-item" href="https://github.com/stupdit1t" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="http://www.beian.miit.gov.cn/" target="_blank">陕ICP备18020347号</a>
+    </div>
+</footer>
+
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?FuckUBaidu";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'XXX', 'auto');
+      ga('send', 'pageview');
+  </script>
+
+
+</body>
+</html>
