@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kanchai.club/"/>
-  <updated>2020-04-01T03:55:50.804Z</updated>
+  <updated>2020-04-20T02:42:22.000Z</updated>
   <id>https://kanchai.club/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>谈谈关于缓存穿透，缓存击穿，缓存雪崩，热点数据失效问题的解决方案</title>
+    <link href="https://kanchai.club/2020/04/20/%E8%B0%88%E8%B0%88%E5%85%B3%E4%BA%8E%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%EF%BC%8C%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%EF%BC%8C%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%EF%BC%8C%E7%83%AD%E7%82%B9%E6%95%B0%E6%8D%AE%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/"/>
+    <id>https://kanchai.club/2020/04/20/%E8%B0%88%E8%B0%88%E5%85%B3%E4%BA%8E%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%EF%BC%8C%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%EF%BC%8C%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%EF%BC%8C%E7%83%AD%E7%82%B9%E6%95%B0%E6%8D%AE%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</id>
+    <published>2020-04-20T02:42:53.764Z</published>
+    <updated>2020-04-20T02:42:22.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>作者：Tom-shushu</p><p>cnblogs.com/Tom-shushu/p/10636382.html</p></blockquote><h2 id="1-我们使用缓存时的业务流程大概为："><a href="#1-我们使用缓存时的业务流程大概为：" class="headerlink" title="1.我们使用缓存时的业务流程大概为："></a>1.我们使用缓存时的业务流程大概为：</h2><p><img src="https://www.javazhiyin.com/wp-content/uploads/2020/04/java10-1586143832.png" alt="面试官：谈谈关于缓存穿透，缓存击穿，缓存雪崩，热点数据失效问题的解决方案" title="面试官：谈谈关于缓存穿透，缓存击穿，缓存雪崩，热点数据失效问题的解决方案"></p><p>当我们查询一条数据时，先去查询缓存，如果缓存有就直接返回，如果没有就去查询数据库，然后返回。这种情况下就可能出现下面的一些现象。</p><h2 id="2-缓存穿透"><a href="#2-缓存穿透" class="headerlink" title="2.缓存穿透"></a>2.缓存穿透</h2><h3 id="2-1什么是缓存穿透"><a href="#2-1什么是缓存穿透" class="headerlink" title="2.1什么是缓存穿透"></a>2.1什么是缓存穿透</h3><p>缓存穿透是指查询一个一定不存在的数据，由于缓存是不命中时被动写的，并且出于容错考虑，如果从存储层查不到数据则不写入缓存，这将导致这个不存在的数据每次请求都要到存储层去查询，失去了缓存的意义。在流量大时，可能DB就挂掉了，要是有人利用不存在的key频繁攻击我们的应用，这就是漏洞。</p><h3 id="2-2缓存穿透带来的问题"><a href="#2-2缓存穿透带来的问题" class="headerlink" title="2.2缓存穿透带来的问题"></a>2.2缓存穿透带来的问题</h3><p>试想一下，如果有黑客对你的系统进行攻击，拿一个不存在的id去查询数据，会产生大量的请求到你的数据库去查询，可能会导致你的数据库由于压力过大而宕掉。</p><h3 id="2-3解决的办法"><a href="#2-3解决的办法" class="headerlink" title="2.3解决的办法"></a>2.3解决的办法</h3><h4 id="2-3-1缓存空值"><a href="#2-3-1缓存空值" class="headerlink" title="2.3.1缓存空值"></a>2.3.1缓存空值</h4><p>之所以会发生穿透，就是因为缓存中没有储存这些空数据的key。从而导致每次查询都到数据库去了。</p><p>那么我们就可以为这些key对应的值设置为null丢到缓存里面去。后面出现查询这个key的请求的时候直接返回null。</p><p>这样就不用再到数据库中去走一圈了，但是别忘了设置过期时间。</p><p>缓存空对象会有两个问题：</p><ul><li><p>第一，空值做了缓存，意味着缓存层中存了更多的键，需要更多的内存空间 ( 如果是攻击，问题更严重 )，比较有效的方法是针对这类数据设置一个较短的过期时间，让其自动剔除。</p></li><li><p>第二，缓存层和存储层的数据会有一段时间窗口的不一致，可能会对业务有一定影响。例如过期时间设置为 5分钟，如果此时存储层添加了这个数据，那此段时间就会出现缓存层和存储层数据的不一致，此时可以利用消息系统或者其他方式清除掉缓存层中的空对象。</p></li></ul><h4 id="2-3-2用布隆过滤器BloomFilter"><a href="#2-3-2用布隆过滤器BloomFilter" class="headerlink" title="2.3.2用布隆过滤器BloomFilter"></a>2.3.2用布隆过滤器BloomFilter</h4><p>BloomFilter类似于一个hbase set用来判断某个元素(key)是否存在于某个集合中。</p><p>这种方式在大数据场景应用比较多，比如Hbase中使用它去判断数据是否在磁盘上。还有在爬虫场景判断url是否已经被爬取过。</p><p>这种方案可以加在第一种方案中，在缓存之前加一层BloomFilter，在查询的时候先去BloomFilter去查询key是否存在，如果不存在就直接返回，存在再去查缓存——–&gt;差数据库。</p><p>流程图如下：</p><p><img src="https://www.javazhiyin.com/wp-content/uploads/2020/04/java6-1586143832-1.png" alt="面试官：谈谈关于缓存穿透，缓存击穿，缓存雪崩，热点数据失效问题的解决方案" title="面试官：谈谈关于缓存穿透，缓存击穿，缓存雪崩，热点数据失效问题的解决方案"></p><h3 id="2-4如何选择"><a href="#2-4如何选择" class="headerlink" title="2.4如何选择"></a>2.4如何选择</h3><p>针对于一些恶意攻击，攻击带来大量key是不存在的，那么我们采用第一种方案就会缓存大量不存在的数据。此时我们采用第一种方案就不合适了，我们完全可以先使用第二种方案过滤掉这些key。</p><p>针对这些key异常多，请求多，重复率比较低的数据，我们就没有必要进行缓存，使用第二种方案直接过滤掉。</p><p>而对于空数据的key有限的，重复率比较高的，我们则可以采用第一种方式进行缓存。</p><h2 id="3-缓存击穿"><a href="#3-缓存击穿" class="headerlink" title="3.缓存击穿"></a>3.缓存击穿</h2><h3 id="3-1什么是缓存击穿"><a href="#3-1什么是缓存击穿" class="headerlink" title="3.1什么是缓存击穿"></a>3.1什么是缓存击穿</h3><p>缓存击穿是我们使用缓存可能遇到的第二个问题。</p><p>在平时高并发的系统中，大量的请求同时查询一个key时，此时这个key正好失效了，就会导致大量的请求都打到数据库上面去，这种现象我们称为缓存击穿。</p><h3 id="3-2会带来什么问题"><a href="#3-2会带来什么问题" class="headerlink" title="3.2会带来什么问题"></a>3.2会带来什么问题</h3><p>会造成某一时刻数据请求量过大，压力剧增。</p><h3 id="3-3如何解决"><a href="#3-3如何解决" class="headerlink" title="3.3如何解决"></a>3.3如何解决</h3><p>上面现象是多个线程同时去查询数据库的这一条数据，那么我们可以在第一个查询数据的请求上使用一个互斥锁来锁住它。（如果是单机，可以用synchronized或者lock来处理，如果是分布式环境可以用分布式锁就可以了（分布式锁，可以用memcache的add, redis的setnx, zookeeper的添加节点操作））</p><p>其他线程走到这一步拿不到锁就等着，等待第一个线程查询到了数据，然后做缓存。后面的线程进来发现已经有了缓存，就直接走缓存。</p><h2 id="4-缓存雪崩"><a href="#4-缓存雪崩" class="headerlink" title="4.缓存雪崩"></a>4.缓存雪崩</h2><h3 id="4-1什么是缓存雪崩"><a href="#4-1什么是缓存雪崩" class="headerlink" title="4.1什么是缓存雪崩"></a>4.1什么是缓存雪崩</h3><p>缓存雪崩的情况是指：当某一时刻发生大规模的缓存失效的情况，比如你的缓存服务宕机了，会有大量的请求进来直接打到数据库上面，结果就是数据库挂掉。</p><p><img src="https://www.javazhiyin.com/wp-content/uploads/2020/04/java9-1586143832.png" alt="面试官：谈谈关于缓存穿透，缓存击穿，缓存雪崩，热点数据失效问题的解决方案" title="面试官：谈谈关于缓存穿透，缓存击穿，缓存雪崩，热点数据失效问题的解决方案"></p><h3 id="4-2解决办法"><a href="#4-2解决办法" class="headerlink" title="4.2解决办法"></a>4.2解决办法</h3><h4 id="4-2-1雪崩前：使用集群缓存，保证缓存服务的高可用"><a href="#4-2-1雪崩前：使用集群缓存，保证缓存服务的高可用" class="headerlink" title="4.2.1雪崩前：使用集群缓存，保证缓存服务的高可用"></a>4.2.1雪崩前：使用集群缓存，保证缓存服务的高可用</h4><p>这种方案就是在发生雪崩前对缓存集群，实现高可用，如果是使用Redis，可以使用（主从 + 哨兵），Redis Cluster来避免Redis全盘崩溃的情况。</p><h4 id="4-2-2雪崩中：ehcache本地缓存-Hystrix限流-amp-降级，避免MySQl被打死"><a href="#4-2-2雪崩中：ehcache本地缓存-Hystrix限流-amp-降级，避免MySQl被打死" class="headerlink" title="4.2.2雪崩中：ehcache本地缓存 + Hystrix限流 &amp; 降级，避免MySQl被打死"></a>4.2.2雪崩中：ehcache本地缓存 + Hystrix限流 &amp; 降级，避免MySQl被打死</h4><p>使用ehcache本地缓存的目的也是考虑Redis Cluster完全不可用的时候，ehcache本地缓存还能够支撑一阵。</p><p>使用Hystrix进行限流 &amp; 降级，比如一秒来了5000个请求，我们可以设置假设一秒只能有2000个请求可以通过这个组件，那么其他剩余的3000请求就会走限流逻辑。</p><p>然后去调用我们自己开发的降级组件（降级）,比如设置的一些默认值等等之类的。以此来保护最后的MySQl不会被大量的请求打死。</p><h4 id="4-2-3雪崩后：开启Redis持久化，尽快恢复缓存集群。"><a href="#4-2-3雪崩后：开启Redis持久化，尽快恢复缓存集群。" class="headerlink" title="4.2.3雪崩后：开启Redis持久化，尽快恢复缓存集群。"></a>4.2.3雪崩后：开启Redis持久化，尽快恢复缓存集群。</h4><h2 id="5-解决热点数据集中失效问题"><a href="#5-解决热点数据集中失效问题" class="headerlink" title="5.解决热点数据集中失效问题"></a>5.解决热点数据集中失效问题</h2><p>我们在设置缓存的时候，一般会给缓存设置一个失效的时间，过了这个时间，缓存就失效了。</p><p>对于一些热点数据来说，当缓存失效后会存在大量的请求到数据库上来，从而可能导致数据库崩溃的情况。</p><h3 id="5-1解决办法"><a href="#5-1解决办法" class="headerlink" title="5.1解决办法"></a>5.1解决办法</h3><h4 id="5-1-1设置不同的失效时间"><a href="#5-1-1设置不同的失效时间" class="headerlink" title="5.1.1设置不同的失效时间"></a>5.1.1设置不同的失效时间</h4><p>为了避免这些热点数据集体失效，那么我们在设置缓存过期时间的时侯，让他们失效的时间错开。比如我们可以在原有的失效时间基础上增加一个随机值。</p><h4 id="5-1-2互斥锁"><a href="#5-1-2互斥锁" class="headerlink" title="5.1.2互斥锁"></a>5.1.2互斥锁</h4><p>结合上面的击穿情况，在第一个请求去查询数据库的时候对它加一个互斥锁，其余的查询请求都会被阻塞住，直到锁被释放，从而保护数据库。</p><p>但是也是由于它会阻塞其他线程，此时系统的吞吐量会下降。需要结合实际业务去考虑。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;作者：Tom-shushu&lt;/p&gt;
+&lt;p&gt;cnblogs.com/Tom-shushu/p/10636382.html&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;1-我们使用缓存时的业务流程大概为：&quot;&gt;&lt;a href=&quot;#1-我们使用缓存
+      
+    
+    </summary>
+    
+    
+    
+      <category term="JAVA缓存" scheme="https://kanchai.club/tags/JAVA%E7%BC%93%E5%AD%98/"/>
+    
+  </entry>
   
   <entry>
     <title>FFmpeg 视频处理教程！</title>
@@ -477,29 +505,6 @@
     
     
       <category term="mongo集群" scheme="https://kanchai.club/tags/mongo%E9%9B%86%E7%BE%A4/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>IDEA快捷键</title>
-    <link href="https://kanchai.club/2020/03/17/%E5%8F%B2%E4%B8%8A%E6%9C%80%E5%85%A8IDEA%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
-    <id>https://kanchai.club/2020/03/17/%E5%8F%B2%E4%B8%8A%E6%9C%80%E5%85%A8IDEA%E5%BF%AB%E6%8D%B7%E9%94%AE/</id>
-    <published>2020-03-17T15:36:45.229Z</published>
-    <updated>2020-03-17T15:35:12.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>IDEA快捷键比较全面的</p><a id="more"></a><h3 id="常规"><a href="#常规" class="headerlink" title="常规"></a>常规</h3><ol><li>Ctrl+Shift + Enter，语句完成</li><li>“！”，否定完成，输入表达式时按 “！”键</li><li>Ctrl+E，最近的文件</li><li>Ctrl+Shift+E，最近更改的文件</li><li>Shift+Click，可以关闭文件</li><li>Ctrl+[ OR ]，可以跑到大括号的开头与结尾</li><li>Ctrl+F12，可以显示当前文件的结构</li><li>Ctrl+F7，可以查询当前元素在当前文件中的引用，然后按 F3 可以选择</li><li>Ctrl+N，可以快速打开类</li><li>Ctrl+Shift+N，可以快速打开文件</li><li>Alt+Q，可以看到当前方法的声明</li><li>Ctrl+P，可以显示参数信息</li><li>Ctrl+Shift+Insert，可以选择剪贴板内容并插入</li><li>Alt+Insert，可以生成构造器/Getter/Setter等</li><li>Ctrl+Alt+V，可以引入变量。例如：new String();  自动导入变量定义</li><li>Ctrl+Alt+T，可以把代码包在一个块内，例如：try/catch</li><li>Ctrl+Enter，导入包，自动修正</li><li>Ctrl+Alt+L，格式化代码</li><li>Ctrl+Alt+I，将选中的代码进行自动缩进编排，这个功能在编辑 JSP 文件时也可以工作</li><li>Ctrl+Alt+O，优化导入的类和包</li><li>Ctrl+R，替换文本</li><li>Ctrl+F，查找文本</li><li>Ctrl+Shift+Space，自动补全代码</li><li>Ctrl+空格，代码提示（与系统输入法快捷键冲突）</li><li>Ctrl+Shift+Alt+N，查找类中的方法或变量</li><li>Alt+Shift+C，最近的更改</li><li>Alt+Shift+Up/Down，上/下移一行</li><li>Shift+F6，重构 - 重命名</li><li>Ctrl+X，删除行</li><li>Ctrl+D，复制行</li><li>Ctrl+/或Ctrl+Shift+/，注释（//或者/**/）</li><li>Ctrl+J，自动代码（例如：serr）</li><li>Ctrl+Alt+J，用动态模板环绕</li><li>Ctrl+H，显示类结构图（类的继承层次）</li><li>Ctrl+Q，显示注释文档</li><li>Alt+F1，查找代码所在位置</li><li>Alt+1，快速打开或隐藏工程面板</li><li>Ctrl+Alt+left/right，返回至上次浏览的位置</li><li>Alt+left/right，切换代码视图</li><li>Alt+Up/Down，在方法间快速移动定位</li><li>Ctrl+Shift+Up/Down，向上/下移动语句</li><li>F2 或 Shift+F2，高亮错误或警告快速定位</li><li>Tab，代码标签输入完成后，按 Tab，生成代码</li><li>Ctrl+Shift+F7，高亮显示所有该文本，按 Esc 高亮消失</li><li>Alt+F3，逐个往下查找相同文本，并高亮显示</li><li>Ctrl+Up/Down，光标中转到第一行或最后一行下</li><li>Ctrl+B/Ctrl+Click，快速打开光标处的类或方法（跳转到定义处）</li><li>Ctrl+Alt+B，跳转到方法实现处</li><li>Ctrl+Shift+Backspace，跳转到上次编辑的地方</li><li>Ctrl+O，重写方法</li><li>Ctrl+Alt+Space，类名自动完成</li><li>Ctrl+Alt+Up/Down，快速跳转搜索结果</li><li>Ctrl+Shift+J，整合两行</li><li>Alt+F8，计算变量值</li><li>Ctrl+Shift+V，可以将最近使用的剪贴板内容选择插入到文本</li><li>Ctrl+Alt+Shift+V，简单粘贴</li><li>Shift+Esc，不仅可以把焦点移到编辑器上，而且还可以隐藏当前（或最后活动的）工具窗口</li><li>F12，把焦点从编辑器移到最近使用的工具窗口</li><li>Shift+F1，要打开编辑器光标字符处使用的类或者方法 Java 文档的浏览器</li><li>Ctrl+W，可以选择单词继而语句继而行继而函数</li><li>Ctrl+Shift+W，取消选择光标所在词</li><li>Alt+F7，查找整个工程中使用地某一个类、方法或者变量的位置</li><li>Ctrl+I，实现方法</li><li>Ctrl+Shift+U，大小写转化</li><li>Ctrl+Y，删除当前行</li><li>Shift+Enter，向下插入新行</li><li>psvm/sout，main/System.out.println(); Ctrl+J，查看更多</li><li>Ctrl+Shift+F，全局查找</li><li>Ctrl+F，查找/Shift+F3，向上查找/F3，向下查找</li><li>Ctrl+Shift+S，高级搜索</li><li>Ctrl+U，转到父类</li><li>Ctrl+Alt+S，打开设置对话框</li><li>Alt+Shift+Inert，开启/关闭列选择模式</li><li>Ctrl+Alt+Shift+S，打开当前项目/模块属性</li><li>Ctrl+G，定位行</li><li>Alt+Home，跳转到导航栏</li><li>Ctrl+Enter，上插一行</li><li>Ctrl+Backspace，按单词删除</li><li>Ctrl+”+/-“，当前方法展开、折叠</li><li>Ctrl+Shift+”+/-“，全部展开、折叠</li></ol><h3 id="调试部分、编译"><a href="#调试部分、编译" class="headerlink" title="调试部分、编译"></a>调试部分、编译</h3><ol><li>Ctrl+F2，停止</li><li>Alt+Shift+F9，选择 Debug</li><li>Alt+Shift+F10，选择 Run</li><li>Ctrl+Shift+F9，编译</li><li>Ctrl+Shift+F10，运行</li><li>Ctrl+Shift+F8，查看断点</li><li>F8，步过</li><li>F7，步入</li><li>Shift+F7，智能步入</li><li>Shift+F8，步出</li><li>Alt+Shift+F8，强制步过</li><li>Alt+Shift+F7，强制步入</li><li>Alt+F9，运行至光标处</li><li>Ctrl+Alt+F9，强制运行至光标处</li><li>F9，恢复程序</li><li>Alt+F10，定位到断点</li><li>Ctrl+F8，切换行断点</li><li>Ctrl+F9，生成项目</li><li>Alt+1，项目</li><li>Alt+2，收藏</li><li>Alt+6，TODO</li><li>Alt+7，结构</li><li>Ctrl+Shift+C，复制路径</li><li>Ctrl+Alt+Shift+C，复制引用，必须选择类名</li><li>Ctrl+Alt+Y，同步</li><li>Ctrl+~，快速切换方案（界面外观、代码风格、快捷键映射等菜单）</li><li>Shift+F12，还原默认布局</li><li>Ctrl+Shift+F12，隐藏/恢复所有窗口</li><li>Ctrl+F4，关闭</li><li>Ctrl+Shift+F4，关闭活动选项卡</li><li>Ctrl+Tab，转到下一个拆分器</li><li>Ctrl+Shift+Tab，转到上一个拆分器</li></ol><h3 id="重构"><a href="#重构" class="headerlink" title="重构"></a>重构</h3><ol><li>Ctrl+Alt+Shift+T，弹出重构菜单</li><li>Shift+F6，重命名</li><li>F6，移动</li><li>F5，复制</li><li>Alt+Delete，安全删除</li><li>Ctrl+Alt+N，内联</li></ol><h3 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h3><ol><li>Ctrl+F，查找</li><li>Ctrl+R，替换</li><li>F3，查找下一个</li><li>Shift+F3，查找上一个</li><li>Ctrl+Shift+F，在路径中查找</li><li>Ctrl+Shift+R，在路径中替换</li><li>Ctrl+Shift+S，搜索结构</li><li>Ctrl+Shift+M，替换结构</li><li>Alt+F7，查找用法</li><li>Ctrl+Alt+F7，显示用法</li><li>Ctrl+F7，在文件中查找用法</li><li>Ctrl+Shift+F7，在文件中高亮显示用法</li></ol><h3 id="VCS"><a href="#VCS" class="headerlink" title="VCS"></a>VCS</h3><ol><li>Alt+~，VCS 操作菜单</li><li>Ctrl+K，提交更改</li><li>Ctrl+T，更新项目</li><li>Ctrl+Alt+Shift+D，显示变化</li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;IDEA快捷键比较全面的&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="开发工具" scheme="https://kanchai.club/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/"/>
-    
-    
-      <category term="IDEA快捷键" scheme="https://kanchai.club/tags/IDEA%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
     
   </entry>
   
