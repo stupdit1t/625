@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>Mysql去重sql</title>
+      <link href="/2020/04/21/Mysql%E5%8E%BB%E9%87%8Dsql/"/>
+      <url>/2020/04/21/Mysql%E5%8E%BB%E9%87%8Dsql/</url>
+      
+        <content type="html"><![CDATA[<p>替换变量table_name 和 group_by</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">DELETE</span><br><span class="line">FROM</span><br><span class="line">$&#123;table_name&#125;</span><br><span class="line">WHERE ID NOT IN (</span><br><span class="line">SELECT</span><br><span class="line">*</span><br><span class="line">FROM</span><br><span class="line">(</span><br><span class="line">SELECT</span><br><span class="line">Max(ID)</span><br><span class="line">FROM</span><br><span class="line">    $&#123;table_name&#125;</span><br><span class="line">GROUP BY</span><br><span class="line">$&#123;group_by&#125;</span><br><span class="line">bb</span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> mysql </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>OpenResty下载与安装(Linux&amp;Windos)</title>
       <link href="/2020/04/21/OpenResty%E4%B8%8B%E8%BD%BD%E4%B8%8E%E5%AE%89%E8%A3%85(Linux&amp;Windos)/"/>
       <url>/2020/04/21/OpenResty%E4%B8%8B%E8%BD%BD%E4%B8%8E%E5%AE%89%E8%A3%85(Linux&amp;Windos)/</url>
