@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  
+  
+    <meta name="keywords" content="微服务,SpringCloud," />
+  
+
+  
+    <meta name="description" content="纪录一些看到的好文，收藏起来" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/logo.png">
+  <title>注册中心ZooKeeper、Eureka、Consul 、Nacos对比 [ 每天拾柴火 ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="每天拾柴火" type="application/atom+xml">
+</head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="http://blob.kanchai.club/images/logo.png">
+    <span class="title">每天拾柴火</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">首页</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">归档</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">标签</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/search" class="pure-menu-link">搜索</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">关于</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/atom.xml" class="pure-menu-link">订阅</a></li>
+          
+      
+  </ul>
+   
+</nav>
+
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        注册中心ZooKeeper、Eureka、Consul 、Nacos对比
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2020-07-29T02:40:53.323Z">
+        2020-07-29
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+      <span class="read">阅读耗时 23 分钟</span>
+    </header>
+
+    <div class="post-content">
+      <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>服务注册中心本质上是为了解耦服务提供者和服务消费者。对于任何一个微服务，原则上都应存在或者支持多个提供者，这是由微服务的分布式属性决定的。更进一步，为了支持弹性扩缩容特性，一个微服务的提供者的数量和分布往往是动态变化的，也是无法预先确定的。因此，原本在单体应用阶段常用的静态LB机制就不再适用了，需要引入额外的组件来管理微服务提供者的注册与发现，而这个组件就是服务注册中心。</p>
+<h1 id="CAP理论"><a href="#CAP理论" class="headerlink" title="CAP理论"></a>CAP理论</h1><p>CAP理论是分布式架构中重要理论</p>
+<blockquote>
+<ul>
+<li><p>一致性(Consistency) (所有节点在同一时间具有相同的数据)</p>
+</li>
+<li><p>可用性(Availability) (保证每个请求不管成功或者失败都有响应)</p>
+</li>
+<li><p>分隔容忍(Partition tolerance) (系统中任意信息的丢失或失败不会影响系统的继续运作)</p>
+</li>
+</ul>
+</blockquote>
+<p>关于</p>
+<p>P的理解，我觉得是在整个系统中某个部分，挂掉了，或者宕机了，并不影响整个系统的运作或者说使用，</p>
+<p>而可用性是，某个系统的某个节点挂了，但是并不影响系统的接受或者发出请求，CAP 不可能都取，只能取其中2个</p>
+<p>原因是</p>
+<p>如果C是第一需求的话，那么会影响A的性能，因为要数据同步，不然请求结果会有差异，但是数据同步会消耗时间，期间可用性就会降低。</p>
+<p>如果A是第一需求，那么只要有一个服务在，就能正常接受请求，但是对与返回结果变不能保证，原因是，在分布式部署的时候，数据一致的过程不可能想切线路那么快。</p>
+<p>再如果，同事满足一致性和可用性，那么分区容错就很难保证了，也就是单点，也是分布式的基本核心，好了，明白这些理论，就可以在相应的场景选取服务注册与发现了</p>
+<h1 id="服务注册中心解决方案"><a href="#服务注册中心解决方案" class="headerlink" title="服务注册中心解决方案"></a>服务注册中心解决方案</h1><p>设计或者选型一个服务注册中心，首先要考虑的就是服务注册与发现机制。纵观当下各种主流的服务注册中心解决方案，大致可归为三类：</p>
+<ul>
+<li><p>应用内：直接集成到应用中，依赖于应用自身完成服务的注册与发现，最典型的是Netflix提供的<a href="https://github.com/Netflix/eureka" target="_blank" rel="noopener">Eureka</a></p>
+</li>
+<li><p>应用外：把应用当成黑盒，通过应用外的某种机制将服务注册到注册中心，最小化对应用的侵入性，比如Airbnb的<a href="http://nerds.airbnb.com/smartstack-service-discovery-cloud/" target="_blank" rel="noopener">SmartStack</a>，HashiCorp的<a href="https://www.consul.io/" target="_blank" rel="noopener">Consul</a></p>
+</li>
+<li><p>DNS：将服务注册为DNS的SRV记录，严格来说，是一种特殊的应用外注册方式，<a href="https://github.com/skynetservices/skydns" target="_blank" rel="noopener">SkyDNS</a>是其中的代表</p>
+</li>
+</ul>
+<p><em>注1：对于第一类注册方式，除了Eureka这种一站式解决方案，还可以基于ZooKeeper或者Etcd自行实现一套服务注册机制，这在大公司比较常见，但对于小公司而言显然性价比太低。</em></p>
+<p><em>注2：由于DNS固有的缓存缺陷，本文不对第三类注册方式作深入探讨。</em></p>
+<p>除了基本的服务注册与发现机制，从开发和运维角度，至少还要考虑如下五个方面：</p>
+<ul>
+<li><p>测活：服务注册之后，如何对服务进行测活以保证服务的可用性？</p>
+</li>
+<li><p>负载均衡：当存在多个服务提供者时，如何均衡各个提供者的负载？</p>
+</li>
+<li><p>集成：在服务提供端或者调用端，如何集成注册中心？</p>
+</li>
+<li><p>运行时依赖：引入注册中心之后，对应用的运行时环境有何影响？</p>
+</li>
+<li><p>可用性：如何保证注册中心本身的可用性，特别是消除单点故障？</p>
+</li>
+</ul>
+<h1 id="主流注册中心产品"><a href="#主流注册中心产品" class="headerlink" title="主流注册中心产品"></a>主流注册中心产品</h1><table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">Nacos</th>
+<th align="left">Eureka</th>
+<th align="left">Consul</th>
+<th align="left">CoreDNS</th>
+<th align="left">Zookeeper</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">一致性协议</td>
+<td align="left">CP+AP</td>
+<td align="left">AP</td>
+<td align="left">CP</td>
+<td align="left">—</td>
+<td align="left">CP</td>
+</tr>
+<tr>
+<td align="left">健康检查</td>
+<td align="left">TCP/HTTP/MYSQL/Client Beat</td>
+<td align="left">Client Beat</td>
+<td align="left">TCP/HTTP/gRPC/Cmd</td>
+<td align="left">—</td>
+<td align="left">Keep Alive</td>
+</tr>
+<tr>
+<td align="left">负载均衡策略</td>
+<td align="left">权重/</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">metadata/Selector</td>
+<td align="left">Ribbon</td>
+<td align="left">Fabio</td>
+<td align="left">RoundRobin</td>
+<td align="left">—</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">雪崩保护</td>
+<td align="left">有</td>
+<td align="left">有</td>
+<td align="left">无</td>
+<td align="left">无</td>
+<td align="left">无</td>
+</tr>
+<tr>
+<td align="left">自动注销实例</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+<td align="left">不支持</td>
+<td align="left">不支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left">访问协议</td>
+<td align="left">HTTP/DNS</td>
+<td align="left">HTTP</td>
+<td align="left">HTTP/DNS</td>
+<td align="left">DNS</td>
+<td align="left">TCP</td>
+</tr>
+<tr>
+<td align="left">监听支持</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+<td align="left">不支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left">多数据中心</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+<td align="left">不支持</td>
+<td align="left">不支持</td>
+</tr>
+<tr>
+<td align="left">跨注册中心同步</td>
+<td align="left">支持</td>
+<td align="left">不支持</td>
+<td align="left">支持</td>
+<td align="left">不支持</td>
+<td align="left">不支持</td>
+</tr>
+<tr>
+<td align="left">SpringCloud集成</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+<td align="left">不支持</td>
+<td align="left">不支持</td>
+</tr>
+<tr>
+<td align="left">Dubbo集成</td>
+<td align="left">支持</td>
+<td align="left">不支持</td>
+<td align="left">不支持</td>
+<td align="left">不支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left">K8S集成</td>
+<td align="left">支持</td>
+<td align="left">不支持</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+<td align="left">不支持</td>
+</tr>
+</tbody></table>
+<h2 id="Apache-Zookeeper-gt-CP"><a href="#Apache-Zookeeper-gt-CP" class="headerlink" title="Apache Zookeeper -&gt; CP"></a>Apache Zookeeper -&gt; CP</h2><p>与 Eureka 有所不同，Apache Zookeeper 在设计时就紧遵CP原则，即任何时候对 Zookeeper 的访问请求能得到一致的数据结果，同时系统对网络分割具备容错性，但是 Zookeeper 不能保证每次服务请求都是可达的。</p>
+<p>从 Zookeeper 的实际应用情况来看，在使用 Zookeeper 获取服务列表时，如果此时的 Zookeeper 集群中的 Leader 宕机了，该集群就要进行 Leader 的选举，又或者 Zookeeper 集群中半数以上服务器节点不可用（例如有三个节点，如果节点一检测到节点三挂了 ，节点二也检测到节点三挂了，那这个节点才算是真的挂了），那么将无法处理该请求。所以说，Zookeeper 不能保证服务可用性。</p>
+<p>当然，在大多数分布式环境中，尤其是涉及到数据存储的场景，数据一致性应该是首先被保证的，这也是 Zookeeper 设计紧遵CP原则的另一个原因。</p>
+<p>但是对于服务发现来说，情况就不太一样了，针对同一个服务，即使注册中心的不同节点保存的服务提供者信息不尽相同，也并不会造成灾难性的后果。</p>
+<p>因为对于服务消费者来说，能消费才是最重要的，消费者虽然拿到可能不正确的服务实例信息后尝试消费一下，也要胜过因为无法获取实例信息而不去消费，导致系统异常要好（淘宝的双十一，京东的618就是紧遵AP的最好参照）。</p>
+<p>当master节点因为网络故障与其他节点失去联系时，剩余节点会重新进行leader选举。问题在于，选举leader的时间太长，30~120s，而且选举期间整个zk集群都是不可用的，这就导致在选举期间注册服务瘫痪。</p>
+<p>在云部署环境下， 因为网络问题使得zk集群失去master节点是大概率事件，虽然服务能最终恢复，但是漫长的选举事件导致注册长期不可用是不能容忍的。</p>
+<h2 id="Spring-Cloud-Eureka-gt-AP"><a href="#Spring-Cloud-Eureka-gt-AP" class="headerlink" title="Spring Cloud Eureka  -&gt; AP"></a>Spring Cloud Eureka  -&gt; AP</h2><p><img src="https://img-blog.csdnimg.cn/20190823093426246.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZseTkxMDkwNQ==,size_16,color_FFFFFF,t_70" alt=""></p>
+<p>Spring Cloud Netflix 在设计 Eureka 时就紧遵AP原则（尽管现在2.0发布了，但是由于其闭源的原因 ，但是目前 Ereka 1.x 任然是比较活跃的）。</p>
+<p>Eureka Server 也可以运行多个实例来构建集群，解决单点问题，但不同于 ZooKeeper 的选举 leader 的过程，Eureka Server 采用的是Peer to Peer 对等通信。这是一种去中心化的架构，无 master/slave 之分，每一个 Peer 都是对等的。在这种架构风格中，节点通过彼此互相注册来提高可用性，每个节点需要添加一个或多个有效的 serviceUrl 指向其他节点。每个节点都可被视为其他节点的副本。  </p>
+<p>在集群环境中如果某台 Eureka Server 宕机，Eureka Client 的请求会自动切换到新的 Eureka Server 节点上，当宕机的服务器重新恢复后，Eureka 会再次将其纳入到服务器集群管理之中。当节点开始接受客户端请求时，所有的操作都会在节点间进行复制（replicate To Peer）操作，将请求复制到该 Eureka Server 当前所知的其它所有节点中。  </p>
+<p>当一个新的 Eureka Server 节点启动后，会首先尝试从邻近节点获取所有注册列表信息，并完成初始化。Eureka Server 通过 getEurekaServiceUrls() 方法获取所有的节点，并且会通过心跳契约的方式定期更新。</p>
+<p>默认情况下，如果 Eureka Server 在一定时间内没有接收到某个服务实例的心跳（默认周期为30秒），Eureka Server 将会注销该实例（默认为90秒， eureka.instance.lease-expiration-duration-in-seconds 进行自定义配置）。</p>
+<p>当 Eureka Server 节点在短时间内丢失过多的心跳时，那么这个节点就会进入自我保护模式。</p>
+<p>Eureka的集群中，只要有一台Eureka还在，就能保证注册服务可用（保证可用性），只不过查到的信息可能不是最新的（不保证强一致性）。除此之外，Eureka还有一种自我保护机制，如果在15分钟内超过85%的节点都没有正常的心跳，那么Eureka就认为客户端与注册中心出现了网络故障，此时会出现以下几种情况：</p>
+<ol>
+<li><p>Eureka不再从注册表中移除因为长时间没有收到心跳而过期的服务；</p>
+</li>
+<li><p>Eureka仍然能够接受新服务注册和查询请求，但是不会被同步到其它节点上（即保证当前节点依然可用）；</p>
+</li>
+<li><p>当网络稳定时，当前实例新注册的信息会被同步到其它节点中；</p>
+</li>
+</ol>
+<p>因此，Eureka可以很好的应对因网络故障导致部分节点失去联系的情况，而不会像zookeeper那样使得整个注册服务瘫痪。</p>
+<h2 id="Consul："><a href="#Consul：" class="headerlink" title="Consul："></a>Consul：</h2><p>Consul 是 HashiCorp 公司推出的开源工具，用于实现分布式系统的服务发现与配置。Consul 使用 Go 语言编写，因此具有天然可移植性（支持Linux、windows和Mac OS X）。</p>
+<p>Consul 内置了服务注册与发现框架、分布一致性协议实现、健康检查、Key/Value 存储、多数据中心方案，不再需要依赖其他工具（比如 ZooKeeper 等），使用起来也较为简单。</p>
+<p>Consul 遵循CAP原理中的CP原则，保证了强一致性和分区容错性，且使用的是Raft算法，比zookeeper使用的Paxos算法更加简单。虽然保证了强一致性，但是可用性就相应下降了，例如服务注册的时间会稍长一些，因为 Consul 的 raft 协议要求必须过半数的节点都写入成功才认为注册成功 ；在leader挂掉了之后，重新选举出leader之前会导致Consul 服务不可用。</p>
+<p><img src="https://img-blog.csdnimg.cn/20190823093438619.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZseTkxMDkwNQ==,size_16,color_FFFFFF,t_70" alt="">默认依赖于SDK</p>
+<p> Consul本质上属于应用外的注册方式，但可以通过SDK简化注册流程。而服务发现恰好相反，默认依赖于SDK，但可以通过Consul Template（下文会提到）去除SDK依赖。</p>
+<p><img src="https://img-blog.csdnimg.cn/20190823093459885.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZseTkxMDkwNQ==,size_16,color_FFFFFF,t_70" alt="">Consul Template</p>
+<p>Consul Template</p>
+<p>Consul，默认服务调用者需要依赖Consul SDK来发现服务，这就无法保证对应用的零侵入性。</p>
+<p>所幸通过<a href="https://github.com/hashicorp/consul-template" target="_blank" rel="noopener">Consul Template</a>，可以定时从Consul集群获取最新的服务提供者列表并刷新LB配置（比如nginx的upstream），这样对于服务调用者而言，只需要配置一个统一的服务调用地址即可。</p>
+<p>Consul强一致性(C)带来的是：</p>
+<ol>
+<li><p>服务注册相比Eureka会稍慢一些。因为Consul的raft协议要求必须过半数的节点都写入成功才认为注册成功</p>
+</li>
+<li><p>Leader挂掉时，重新选举期间整个consul不可用。保证了强一致性但牺牲了可用性。</p>
+</li>
+</ol>
+<p>Eureka保证高可用(A)和最终一致性：</p>
+<ol>
+<li><p>服务注册相对要快，因为不需要等注册信息replicate到其他节点，也不保证注册信息是否replicate成功</p>
+</li>
+<li><p>当数据出现不一致时，虽然A, B上的注册信息不完全相同，但每个Eureka节点依然能够正常对外提供服务，这会出现查询服务信息时如果请求A查不到，但请求B就能查到。如此保证了可用性但牺牲了一致性。</p>
+</li>
+</ol>
+<p>其他方面，eureka就是个servlet程序，跑在servlet容器中; Consul则是go编写而成。</p>
+<h2 id="Nacos："><a href="#Nacos：" class="headerlink" title="Nacos："></a>Nacos：</h2><p>Nacos是阿里开源的，Nacos 支持基于 DNS 和基于 RPC 的服务发现。在Spring Cloud中使用Nacos，只需要先下载 Nacos 并启动 Nacos server，Nacos只需要简单的配置就可以完成服务的注册发现。</p>
+<p>Nacos除了服务的注册发现之外，还支持动态配置服务。动态配置服务可以让您以中心化、外部化和动态化的方式管理所有环境的应用配置和服务配置。动态配置消除了配置变更时重新部署应用和服务的需要，让配置管理变得更加高效和敏捷。配置中心化管理让实现无状态服务变得更简单，让服务按需弹性扩展变得更容易。</p>
+<p>一句话概括就是Nacos = Spring Cloud注册中心 + Spring Cloud配置中心。  </p>
+<p>参考链接：</p>
+<p><a href="https://yq.aliyun.com/articles/698930" target="_blank" rel="noopener">https://yq.aliyun.com/articles/698930</a></p>
+<p><a href="https://nacos.io/" target="_blank" rel="noopener">https://nacos.io</a></p>
+<p>转载来源 <a href="https://blog.csdn.net/fly910905/article/details/100023415" target="_blank" rel="noopener">https://blog.csdn.net/fly910905/article/details/100023415</a></p>
+
+    </div>
+
+    <div>全文完。</div>
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CAP理论"><span class="toc-text">CAP理论</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#服务注册中心解决方案"><span class="toc-text">服务注册中心解决方案</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#主流注册中心产品"><span class="toc-text">主流注册中心产品</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Apache-Zookeeper-gt-CP"><span class="toc-text">Apache Zookeeper -&gt; CP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Cloud-Eureka-gt-AP"><span class="toc-text">Spring Cloud Eureka  -&gt; AP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Consul："><span class="toc-text">Consul：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nacos："><span class="toc-text">Nacos：</span></a></li></ol></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>注:文章部分来源为转载，会注明出处，每天坚持从外边砍柴！</span>
+</div>
+
+<div class="share" style="width: 100%;">
+  
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2020/07/29/python%E5%AE%9E%E7%8E%B0%E5%8C%BB%E7%96%97%E5%9C%A8%E7%BA%BF%E9%97%AE%E7%AD%94%E6%9C%BA%E5%99%A8%E4%BA%BA/" rel="next" title="python实现医疗在线问答机器人">
+          python实现医疗在线问答机器人
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+      </div>
+    </div>
+  
+
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'XXX';
+    
+    var disqus_url = 'https://kanchai.club/2020/07/29/%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83ZooKeeper%E3%80%81Eureka%E3%80%81Consul_%E3%80%81Nacos%E5%AF%B9%E6%AF%94/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//XXX.disqus.com/count.js" async></script>
+
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://kanchai.club">首页</a> |
+        <a class="bottom-item" href="https://www.zhihu.com/people/lt625" target="_blank">知乎</a> |
+        <a class="bottom-item" href="https://github.com/stupdit1t" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="http://www.beian.miit.gov.cn/" target="_blank">陕ICP备18020347号</a>
+    </div>
+</footer>
+
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?FuckUBaidu";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'XXX', 'auto');
+      ga('send', 'pageview');
+  </script>
+
+
+</body>
+</html>
